@@ -1,0 +1,18 @@
+
+.form-horizontal .control-label{
+	text-align: left; 
+	font-size: 1.5rem;
+}
+
+.btn-primary{
+	background-color: #181818;
+    border-color: #fff;
+}
+
+#fb, #in, #tw{
+	font-size:32px;
+}
+
+#logo{
+	width:40%;
+}
