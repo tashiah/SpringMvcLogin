@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.context.annotation.Scope;
 
 import com.program.demo.delegate.LoginDelegate;
 import com.program.demo.model.LoginBean;
-
-import com.program.demo.model.User;
 
 @Controller
 public class LoginController {
@@ -24,8 +23,6 @@ public class LoginController {
 	@Autowired
 	private LoginDelegate loginDelegate;
 	
-	@Autowired
-	private User user;
 
 	@GetMapping("/")
 	public ModelAndView displayLogin(HttpServletRequest request, HttpServletResponse response)
@@ -36,8 +33,16 @@ public class LoginController {
 		return model;
 	}
 	
+	@GetMapping("/admin")
+    public String adminPanel(HttpSession session)
+	{
+		if(session.getAttribute("user") == null)
+			return "redirect:/";
+		return "welcome";
+	}
+	
 	@PostMapping("/login")
-	public ModelAndView executeLogin(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("loginBean")LoginBean loginBean, User user)
+	public ModelAndView executeLogin(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("loginBean")LoginBean loginBean)
 	{
 			ModelAndView model= null;
 			try
@@ -46,11 +51,11 @@ public class LoginController {
 					if(isValidUser)
 					{
 							System.out.println("User Login Successful");
-							request.setAttribute("loggedInUser", loginBean.getUsername());
-							
-							user.setName(loginBean.getUsername());
+							//request.setAttribute("loggedInUser", loginBean.getUsername());
+						
 							HttpSession session=request.getSession();
-							session.setAttribute("user", user);
+//							request.getSession().setAttribute("user", loginBean.getUsername());
+							session.setAttribute("user", loginBean.getUsername());
 							
 							model = new ModelAndView("welcome");
 					}
@@ -71,7 +76,7 @@ public class LoginController {
 	
 	@GetMapping("/logout")
 	public String loggingout(HttpSession session ) {
-		 System.out.println("logging out...");
+		System.out.println("logging out...");
 		session.removeAttribute("user");
 	    session.invalidate();
 	    return "redirect:/";
